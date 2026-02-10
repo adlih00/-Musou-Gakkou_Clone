@@ -5,6 +5,12 @@ class CursosController {
         this.cursos = almacenado ? JSON.parse(almacenado) : [];
     }
 
+    // NUEVO MÉTODO para quitar curso
+    eliminarCurso(id) {
+        this.cursos = this.cursos.filter(curso => curso.id !== id);
+        this.guardar();
+    }
+
     agregarCurso({titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl}) {
         const id = Date.now();
         const curso = {id, titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl};
