@@ -69,11 +69,13 @@
   background-color: var(--gris);
   color: black;
   border-color: var(--gris);
+  font-size: 3vw;
 }
 
 .dropdown-menu .dropdown-item.active {
   background-color: var(--gris);
   color: black;
+  font-size: 5vw;
 }
 
 @media (max-width: 767.98px) {
@@ -131,4 +133,11 @@ input[type="number"]::-webkit-outer-spin-button {
   height: 220px;
   border-radius: 25px;
   margin: 10px;
+}
+@media screen and (max-width: 400px){
+  .dropdown-menu .dropdown-item.active {
+  background-color: var(--gris);
+  color: black;
+  font-size: 50000vw;
+}
 }
