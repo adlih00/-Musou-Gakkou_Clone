@@ -33,7 +33,7 @@
         <div class="row">
             <div class="col-1 lateral"></div>
             <div class="col-10 contenido">
-                <h1 class="mb-4">Administración de Catálogo</h1>
+                <h1 class="mb-4">Panel de Administrador</h1>
 
                 <ul class="nav nav-tabs" id="adminTabs" role="tablist">
                     <li class="nav-item">
@@ -121,25 +121,6 @@
                     </div>
                 </div>
 
-                    <div class="tab-pane fade" id="gestion" role="tabpanel">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Imagen</th>
-                                        <th>Título</th>
-                                        <th>Precio</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaCursosCuerpo">
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
                 <hr class="mt-5">
                 <div class="actions-section p-3 bg-light rounded">
                     <h5>Herramientas de Datos</h5>
@@ -151,6 +132,44 @@
                     </label>
                     <input type="file" id="importarArchivo" accept=".json" style="display: none;">
                     <div id="mensaje" class="mt-2"></div>
+                </div>
+
+                <!-- Pestaña de editar -->
+                <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarModalLabel">Editar Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editarCursoFormulario">
+                        <input type="hidden" id="editId"> <div class="form-group mb-2">
+                            <label for="editTitulo">Título</label>
+                            <input type="text" id="editTitulo" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="editDescripcion">Descripción Corta</label>
+                            <textarea id="editDescripcion" class="form-control" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-2">
+                            <label for="editPrecio">Precio</label>
+                            <input type="number" id="editPrecio" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 form-group mb-2">
+                            <label for="editImagen">Imagen (URL)</label>
+                            <input type="url" id="editImagen" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer px-0 pb-0 mt-3">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
                 </div>
             </div>  
             <div class="col-1 lateral"></div>
