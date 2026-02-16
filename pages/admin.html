@@ -22,7 +22,7 @@
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <!-- Librería de icon-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./assets/styles/carrito.css">
+    <link rel="stylesheet" href="./assets/styles/admin.css">
 <!--   <link rel="stylesheet" href="./assets/styles/carrito.css">
  -->  <script type="module" src="./assets/js/main.js"></script>
 </head>
@@ -30,7 +30,8 @@
 <body>
     <header id="barra-navegacion" class="sticky-top w-100" style="height: 15%"></header> <!-- HTML Modularizado -->
     <main>
-        <div class="row">
+        <div class="container-fluid">
+            <div class="row">
             <div class="col-1 lateral"></div>
             <div class="col-10 contenido">
                 <h1 class="mb-4">Panel de Administrador</h1>
@@ -98,7 +99,7 @@
                                 <label for="imagenCurso">Imagen (URL)</label>
                                 <input type="url" id="imagenCurso" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" required>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block btn-lg mt-3">Agregar Producto</button>
+                            <button type="submit" class="btn btn-guardar btn-block btn-lg mt-3">Agregar Producto</button>
                         </form>
                     </div>
 
@@ -124,10 +125,10 @@
                 <hr class="mt-5">
                 <div class="actions-section p-3 bg-light rounded">
                     <h5>Herramientas de Datos</h5>
-                    <button id="exportarCursos" class="btn btn-success mr-2">
+                    <button id="exportarCursos" class="btn btn-guardar-json mr-2">
                         <i class="fa fa-download"></i> Guardar producto.json
                     </button>
-                    <label for="importarArchivo" class="btn btn-outline-secondary mb-0">
+                    <label for="importarArchivo" class="btn btn-outline-cargar mb-0">
                         <i class="fa fa-upload"></i> Cargar JSON
                     </label>
                     <input type="file" id="importarArchivo" accept=".json" style="display: none;">
@@ -164,7 +165,7 @@
                         </div>
                         <div class="modal-footer px-0 pb-0 mt-3">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
                         </div>
                         </form>
                     </div>
@@ -173,6 +174,7 @@
                 </div>
             </div>  
             <div class="col-1 lateral"></div>
+            </div>
         </div>
     </main>
       <footer id="footer"></footer> <!-- Footer Modularizado -->
