@@ -25,10 +25,10 @@ function renderizarTabla() {
             <td>${curso.titulo}</td>
             <td>$${curso.precio}</td>
             <td>
-                <button class="btn btn-warning btn-sm mr-1" onclick="prepararEdicion(${curso.id})">
+                <button class="btn btn-outline-cargar btn-sm mr-1" onclick="prepararEdicion(${curso.id})">
                     <i class="fa fa-pencil"></i> Editar
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="borrarRegistro(${curso.id})">
+                <button style="background-color: var(--clr-primary); color: white;" class="btn  btn-sm" onclick="borrarRegistro(${curso.id})">
                     <i class="fa fa-trash"></i> Eliminar
                 </button>
             </td>
