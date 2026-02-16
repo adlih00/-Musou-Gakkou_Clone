@@ -45,7 +45,7 @@ contenido +=
     <h5 class="card-title">${resenas[i].mensaje}</h5>
     <div class="row">
     <div class="col-3">
-        <img class="perfil-miniatura" src="./assets/img/img-resenas/blank-profile-picture.webp">
+        <img class="perfil-miniatura" src="../assets/img/img-resenas/blank-profile-picture.webp">
     </div>
     <div class="col-9">
     <h6 class="card-subtitle mb-2 text-body-secondary">${resenas[i].autor}</h6>
