@@ -1,5 +1,6 @@
 // Referencia al cuerpo de la tabla donde se mostrarán los productos
 const tablaCursosCuerpo = document.getElementById("tablaCursosCuerpo");
+// Instancia el controlador para acceder a los métodos de datos (LocalStorage)
 const cursosController = new CursosController(); 
 
 /**
@@ -8,9 +9,6 @@ const cursosController = new CursosController();
 function renderizarTabla() {
     // Verificación de seguridad: si el elemento no existe en el HTML, detiene la función
     if(!tablaCursosCuerpo) return; 
-
-    // Instancia el controlador para acceder a los métodos de datos (LocalStorage)
-    //cursosController = new CursosController();
     
     // Limpia el contenido actual de la tabla para evitar duplicados al refrescar
     tablaCursosCuerpo.innerHTML = "";
