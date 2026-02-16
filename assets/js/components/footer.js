@@ -62,8 +62,7 @@ const footer = () =>{
 
         <div class="d-none d-md-block col-md-1 text-center text-md-start ">
           <a href="./pages/cursos.html"><p class="fw-bold">Cursos</p></a>
-          <a href="./pages/cursos.html"><p class="text-md-center">Clases</p></a>
-          <a href="./pages/cursos.html"><p class="text-md-center">Recursos</p></a>
+          <a href="./pages/recursos.html"><p class="text-md-center">Recursos</p></a>
         </div>
         <div class="d-none d-md-block col-md-2 text-center">
           <a href="./pages/cultura.html"><p class="fw-bold">Cultura/Galeria</p></a>
