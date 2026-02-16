@@ -128,6 +128,6 @@ function generarHTML(lista){ // Función para  generar y actualizar HTML según 
                     </a>
                     </div>`;
         });
-        console.log(contenido)
+        //console.log(contenido)??
     return contenido; //devuelve todo el String de HTML relleno con los parámetros que van cambiando
     }
