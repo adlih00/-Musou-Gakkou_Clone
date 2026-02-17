@@ -3,15 +3,42 @@
  * Gestiona la lógica de persistencia y manipulación de los productos (cursos/recursos).
  */
 class CursosController {
-    constructor() {
+     constructor() {
         // Al instanciar la clase, intentamos recuperar los datos del localStorage
-        const almacenado = localStorage.getItem('cursos');
+        
+        //const almacenado = localStorage.getItem('cursos');
         
         // Si hay datos, los convertimos de JSON (texto) a un Array de objetos JS. 
         // Si no hay nada, inicializamos un array vacío.
-        this.cursos = almacenado ? JSON.parse(almacenado) : [];
+        //this.cursos = almacenado ? JSON.parse(almacenado) : [];
+        this.apiUrl = "https://localhost:8080/api/v1/cursos";
     }
 
+
+     //// GET: Obtener todos desde el Back
+    async obtenerTodos() {
+        try {
+            const respuesta = await fetch(this.apiUrl);
+            if (!respuesta.ok) throw new Error("Error al obtener datos");
+            return await respuesta.json();
+        } catch (error) {
+            console.error("Error en el GET:", error);
+            return [];
+        }
+    }
+    // POST: Guardar en la BD del Back
+    async agregarCurso(curso) {
+        try {
+            const respuesta = await fetch(this.apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(curso)
+            });
+            return await respuesta.json();
+        } catch (error) {
+            console.error("Error en el POST:", error);
+        }
+    }
     /**
      * Elimina un curso del array y actualiza el almacenamiento.
      * @param {number} id - El identificador único del curso a borrar.
@@ -93,5 +120,5 @@ class CursosController {
             return true;
         }
         return false;
-    }
+    } 
 }

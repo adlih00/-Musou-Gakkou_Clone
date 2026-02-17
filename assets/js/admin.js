@@ -1,12 +1,15 @@
+import { getProducts } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+
 // Referencia al cuerpo de la tabla donde se mostrarán los productos
 const tablaCursosCuerpo = document.getElementById("tablaCursosCuerpo");
 // Instancia el controlador para acceder a los métodos de datos (LocalStorage)
+
 const cursosController = new CursosController(); 
 
 /**
  * Renderiza la lista de productos en la tabla HTML
  */
-function renderizarTabla() {
+async function renderizarTabla() {
     // Verificación de seguridad: si el elemento no existe en el HTML, detiene la función
     if(!tablaCursosCuerpo) return; 
     
@@ -14,21 +17,25 @@ function renderizarTabla() {
     tablaCursosCuerpo.innerHTML = "";
     
     // Obtiene el array de objetos desde el controlador
-    const lista = cursosController.obtenerTodos();
+    //const lista = cursosController.obtenerTodos();
+    const lista = await getProducts();
+    console.log(lista);
+    if (!lista) return;
+
 
     // Itera sobre cada producto para crear una fila (tr) dinámicamente
     lista.forEach((curso) => {
         const fila = document.createElement("tr");
         fila.innerHTML = `
-            <td>${curso.id}</td>
-            <td><img src="${curso.imagenUrl}" width="50" style="object-fit: cover; height: 50px; border-radius: 4px;"></td>
-            <td>${curso.titulo}</td>
-            <td>$${curso.precio}</td>
+            <td>${curso.idCurso}</td>
+            <td><img src="${curso.urlImagenCurso}" width="50" style="object-fit: cover; height: 50px; border-radius: 4px;"></td>
+            <td>${curso.nombreCurso}</td>
+            <td>$${curso.costoCurso}</td>
             <td>
-                <button class="btn btn-outline-cargar btn-sm mr-1" onclick="prepararEdicion(${curso.id})">
+                <button class="btn btn-outline-cargar btn-sm mr-1" onclick="prepararEdicion(${curso.idCurso})">
                     <i class="fa fa-pencil"></i> Editar
                 </button>
-                <button style="background-color: var(--clr-primary); color: white;" class="btn  btn-sm" onclick="borrarRegistro(${curso.id})">
+                <button style="background-color: var(--clr-primary); color: white;" class="btn  btn-sm" onclick="borrarRegistro(${curso.idCurso})">
                     <i class="fa fa-trash"></i> Eliminar
                 </button>
             </td>
@@ -112,30 +119,107 @@ if(pestañaGestion) {
 /**
  * Lógica para el Formulario de Registro (Crear nuevo producto)
  */
+//let API_URL = `http://localhost:8080/api/v1/nuevo-curso`;
 const form = document.getElementById('nuevoCursoFormulario');
-form.addEventListener('submit', (e) => {
+console.log(document.querySelector('input[name="tipoProducto"]:checked').value);
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+    if(document.querySelector('input[name="tipoProducto"]:checked').value === "curso"){
+    let API_URL = `http://localhost:8080/api/v1/nuevo-curso`;
     // Crea un objeto con la estructura requerida por el controlador
     const curso = {
-        titulo: document.getElementById('tituloCurso').value,
-        tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
-        descripcion: document.getElementById('descripcionCurso').value,
-        detalle: document.getElementById('detalleCurso').value,
-        precio: parseFloat(document.getElementById('precioCurso').value),
-        horario: document.getElementById('horarioCurso').value,
-        calificacion: document.getElementById('calificacionCurso').value,
-        fechaInicio: document.getElementById('fechaInicioCurso').value,
-        imagenUrl: document.getElementById('imagenCurso').value
+        nombreCurso: document.getElementById('tituloCurso').value,
+        //tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
+        descripcionCurso: document.getElementById('descripcionCurso').value,
+        detalleCurso: document.getElementById('detalleCurso').value,
+        costoCurso: parseFloat(document.getElementById('precioCurso').value),
+        //horario: document.getElementById('horarioCurso').value,
+        //calificacion: document.getElementById('calificacionCurso').value,
+        inicioCurso: document.getElementById('fechaInicioCurso').value,
+        finCurso: document.getElementById('fechaFinCurso').value,
+        urlImagenCurso: document.getElementById('imagenCurso').value,
+        modalidadCurso: "presencial"
     };
+
+            try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(curso)
+            });
+
+            if (!res.ok) {
+                throw new Error(`Error en la petición: ${res.status}`);
+            }
+
+            const savedProduct = await res.json();
+            console.log('Curso registrado:', savedProduct);
+
+            alert('Curso registrado con éxito');
+            
+          /*  nameInput.value = '';
+            imageUrlInput.value = '';
+            priceInput.value = '';
+            descriptionInput.value = '';*/
+
+        } catch (err) {
+            console.error(err);
+            alert('Hubo un error al registrar el curso.');
+        }
     
     // Guarda el curso y limpia el formulario
     cursosController.agregarCurso(curso);
+
     form.reset();
-    alert('Curso agregado con éxito');
+    //alert('Curso agregado con éxito');
     
     // Refresca la tabla por si el usuario está en la pestaña de gestión
     renderizarTabla();
+    } else{
+        let API_URL = `http://localhost:8080/api/v1/nuevo-recurso`;
+        const recurso = {
+        nombreRecurso: document.getElementById('tituloCurso').value,
+        //tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
+        descripcionRecurso: document.getElementById('descripcionCurso').value,
+        detalleRecurso: document.getElementById('detalleCurso').value,
+        costoRecurso: parseFloat(document.getElementById('precioCurso').value),
+        //horario: document.getElementById('horarioCurso').value,
+        //calificacion: document.getElementById('calificacionCurso').value,
+        //inicioCurso: document.getElementById('fechaInicioCurso').value,
+        //finCurso: document.getElementById('fechaFinCurso').value,
+        urlImagenRecurso: document.getElementById('imagenCurso').value,
+        //modalidadCurso: "presencial"
+    };
+                try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(recurso)
+            });
+
+            if (!res.ok) {
+                throw new Error(`Error en la petición: ${res.status}`);
+            }
+
+            const savedProduct = await res.json();
+            console.log('Recurso registrado:', savedProduct);
+
+            alert('Recurso registrado con éxito');
+            
+          /*  nameInput.value = '';
+            imageUrlInput.value = '';
+            priceInput.value = '';
+            descriptionInput.value = '';*/
+
+        } catch (err) {
+            console.error(err);
+            alert('Hubo un error al registrar el recurso.');
+        }
+    }
 });
 
 /**
