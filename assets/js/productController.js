@@ -113,7 +113,7 @@ export async function getCurso(idCurso) {
                 'Accept': 'application/json' 
             } 
         });
-        if (!response.ok) throw new Error(`HTTP ${res.status}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const products = await response.json();
         return products;
     } catch (err) {
