@@ -1,24 +1,24 @@
-import { getProducts } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+import { getCursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 
 // Referencia al cuerpo de la tabla donde se mostrarán los productos
 const tablaCursosCuerpo = document.getElementById("tablaCursosCuerpo");
 // Instancia el controlador para acceder a los métodos de datos (LocalStorage)
 
-const cursosController = new CursosController(); 
+const cursosController = new CursosController();
 
 /**
  * Renderiza la lista de productos en la tabla HTML
  */
 async function renderizarTabla() {
     // Verificación de seguridad: si el elemento no existe en el HTML, detiene la función
-    if(!tablaCursosCuerpo) return; 
-    
+    if (!tablaCursosCuerpo) return;
+
     // Limpia el contenido actual de la tabla para evitar duplicados al refrescar
     tablaCursosCuerpo.innerHTML = "";
-    
+
     // Obtiene el array de objetos desde el controlador
     //const lista = cursosController.obtenerTodos();
-    const lista = await getProducts();
+    const lista = await getCursos();
     console.log(lista);
     if (!lista) return;
 
@@ -51,7 +51,7 @@ async function renderizarTabla() {
 window.prepararEdicion = (id) => {
     // Busca el objeto exacto en la lista mediante su ID
     const curso = cursosController.obtenerTodos().find(c => c.id === id);
-    
+
     if (curso) {
         // Asigna los valores del objeto a los inputs del formulario modal
         document.getElementById('editId').value = curso.id;
@@ -59,7 +59,7 @@ window.prepararEdicion = (id) => {
         document.getElementById('editDescripcion').value = curso.descripcion;
         document.getElementById('editPrecio').value = curso.precio;
         document.getElementById('editImagen').value = curso.imagenUrl;
-        
+
         // Inicializa y muestra el modal usando la librería de Bootstrap 5
         const modal = new bootstrap.Modal(document.getElementById('editarModal'));
         modal.show();
@@ -72,7 +72,7 @@ window.prepararEdicion = (id) => {
 const editForm = document.getElementById('editarCursoFormulario');
 editForm.addEventListener('submit', (e) => {
     e.preventDefault(); // Evita que la página se recargue
-    
+
     // Recupera el ID (oculto) y los nuevos datos ingresados
     const id = parseInt(document.getElementById('editId').value);
     const datos = {
@@ -85,12 +85,12 @@ editForm.addEventListener('submit', (e) => {
     // Intenta actualizar a través del controlador
     if (cursosController.actualizarCurso(id, datos)) {
         alert('Producto actualizado con éxito');
-        
+
         // Cierra el modal programáticamente
         const modalElement = document.getElementById('editarModal');
         const modalInstance = bootstrap.Modal.getInstance(modalElement);
         modalInstance.hide();
-        
+
         // Refresca la tabla para mostrar los datos actualizados
         renderizarTabla();
     }
@@ -99,11 +99,29 @@ editForm.addEventListener('submit', (e) => {
 /**
  * Función global para eliminar un registro
  */
-window.borrarRegistro = (id) => {
-    // Pide confirmación al usuario antes de borrar
-    if (confirm("¿Seguro que quieres eliminar este producto?")) {
-        cursosController.eliminarCurso(id);
-        renderizarTabla(); // Actualiza la vista inmediatamente
+/**
+ * Función global asíncrona para eliminar un registro
+ */
+window.borrarRegistro = async (id) => {
+    // 1. Pedimos confirmación al usuario
+    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este curso de la base de datos?");
+    
+    if (confirmacion) {
+        // Mostramos un mensaje opcional de "cargando" si lo deseas
+        console.log(`Eliminando curso con ID: ${id}...`);
+
+        // 2. Usamos 'await' para esperar a que el controlador termine la petición fetch
+        const exito = await cursosController.eliminarCurso(id);
+        
+        if (exito) {
+            alert("Curso eliminado correctamente.");
+            
+            // 3. Refrescamos la tabla inmediatamente para mostrar los cambios reales
+            // Como renderizarTabla() es async, también es buena práctica ponerle await
+            await renderizarTabla(); 
+        } else {
+            alert("Hubo un error al intentar eliminar el curso.");
+        }
     }
 };
 
@@ -112,7 +130,7 @@ window.borrarRegistro = (id) => {
  * en la pestaña "Gestionar Existentes"
  */
 const pestañaGestion = document.getElementById('gestion-tab');
-if(pestañaGestion) {
+if (pestañaGestion) {
     pestañaGestion.addEventListener('shown.bs.tab', renderizarTabla);
 }
 
@@ -124,24 +142,24 @@ const form = document.getElementById('nuevoCursoFormulario');
 console.log(document.querySelector('input[name="tipoProducto"]:checked').value);
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if(document.querySelector('input[name="tipoProducto"]:checked').value === "curso"){
-    let API_URL = `http://localhost:8080/api/v1/nuevo-curso`;
-    // Crea un objeto con la estructura requerida por el controlador
-    const curso = {
-        nombreCurso: document.getElementById('tituloCurso').value,
-        //tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
-        descripcionCurso: document.getElementById('descripcionCurso').value,
-        detalleCurso: document.getElementById('detalleCurso').value,
-        costoCurso: parseFloat(document.getElementById('precioCurso').value),
-        //horario: document.getElementById('horarioCurso').value,
-        //calificacion: document.getElementById('calificacionCurso').value,
-        inicioCurso: document.getElementById('fechaInicioCurso').value,
-        finCurso: document.getElementById('fechaFinCurso').value,
-        urlImagenCurso: document.getElementById('imagenCurso').value,
-        modalidadCurso: "presencial"
-    };
+    if (document.querySelector('input[name="tipoProducto"]:checked').value === "curso") {
+        let API_URL = `http://localhost:8080/api/v1/nuevo-curso`;
+        // Crea un objeto con la estructura requerida por el controlador
+        const curso = {
+            nombreCurso: document.getElementById('tituloCurso').value,
+            //tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
+            descripcionCurso: document.getElementById('descripcionCurso').value,
+            detalleCurso: document.getElementById('detalleCurso').value,
+            costoCurso: parseFloat(document.getElementById('precioCurso').value),
+            //horario: document.getElementById('horarioCurso').value,
+            //calificacion: document.getElementById('calificacionCurso').value,
+            inicioCurso: document.getElementById('fechaInicioCurso').value,
+            finCurso: document.getElementById('fechaFinCurso').value,
+            urlImagenCurso: document.getElementById('imagenCurso').value,
+            modalidadCurso: "presencial"
+        };
 
-            try {
+        try {
             const res = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
@@ -158,41 +176,41 @@ form.addEventListener('submit', async (e) => {
             console.log('Curso registrado:', savedProduct);
 
             alert('Curso registrado con éxito');
-            
-          /*  nameInput.value = '';
-            imageUrlInput.value = '';
-            priceInput.value = '';
-            descriptionInput.value = '';*/
+
+            /*  nameInput.value = '';
+              imageUrlInput.value = '';
+              priceInput.value = '';
+              descriptionInput.value = '';*/
 
         } catch (err) {
             console.error(err);
             alert('Hubo un error al registrar el curso.');
         }
-    
-    // Guarda el curso y limpia el formulario
-    cursosController.agregarCurso(curso);
 
-    form.reset();
-    //alert('Curso agregado con éxito');
-    
-    // Refresca la tabla por si el usuario está en la pestaña de gestión
-    renderizarTabla();
-    } else{
+        // Guarda el curso y limpia el formulario
+        cursosController.agregarCurso(curso);
+
+        form.reset();
+        //alert('Curso agregado con éxito');
+
+        // Refresca la tabla por si el usuario está en la pestaña de gestión
+        renderizarTabla();
+    } else {
         let API_URL = `http://localhost:8080/api/v1/nuevo-recurso`;
         const recurso = {
-        nombreRecurso: document.getElementById('tituloCurso').value,
-        //tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
-        descripcionRecurso: document.getElementById('descripcionCurso').value,
-        detalleRecurso: document.getElementById('detalleCurso').value,
-        costoRecurso: parseFloat(document.getElementById('precioCurso').value),
-        //horario: document.getElementById('horarioCurso').value,
-        //calificacion: document.getElementById('calificacionCurso').value,
-        //inicioCurso: document.getElementById('fechaInicioCurso').value,
-        //finCurso: document.getElementById('fechaFinCurso').value,
-        urlImagenRecurso: document.getElementById('imagenCurso').value,
-        //modalidadCurso: "presencial"
-    };
-                try {
+            nombreRecurso: document.getElementById('tituloCurso').value,
+            //tipo: document.querySelector('input[name="tipoProducto"]:checked').value,
+            descripcionRecurso: document.getElementById('descripcionCurso').value,
+            detalleRecurso: document.getElementById('detalleCurso').value,
+            costoRecurso: parseFloat(document.getElementById('precioCurso').value),
+            //horario: document.getElementById('horarioCurso').value,
+            //calificacion: document.getElementById('calificacionCurso').value,
+            //inicioCurso: document.getElementById('fechaInicioCurso').value,
+            //finCurso: document.getElementById('fechaFinCurso').value,
+            urlImagenRecurso: document.getElementById('imagenCurso').value,
+            //modalidadCurso: "presencial"
+        };
+        try {
             const res = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
@@ -209,11 +227,11 @@ form.addEventListener('submit', async (e) => {
             console.log('Recurso registrado:', savedProduct);
 
             alert('Recurso registrado con éxito');
-            
-          /*  nameInput.value = '';
-            imageUrlInput.value = '';
-            priceInput.value = '';
-            descriptionInput.value = '';*/
+
+            /*  nameInput.value = '';
+              imageUrlInput.value = '';
+              priceInput.value = '';
+              descriptionInput.value = '';*/
 
         } catch (err) {
             console.error(err);
@@ -251,7 +269,7 @@ document.getElementById('importarArchivo').addEventListener('change', (event) =>
             cursosController.importarCursos(json);
             document.getElementById('mensaje').innerText = 'Cursos importados correctamente.';
             renderizarTabla(); // Actualiza la tabla con los nuevos datos cargados
-        } catch(err) {
+        } catch (err) {
             document.getElementById('mensaje').innerText = 'Error: El archivo no tiene un formato JSON válido.';
         }
     };
