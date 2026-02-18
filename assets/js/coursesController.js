@@ -3,11 +3,11 @@
  * Gestiona la lógica de persistencia y manipulación de los productos (cursos/recursos).
  */
 class CursosController {
-     constructor() {
+    constructor() {
         // Al instanciar la clase, intentamos recuperar los datos del localStorage
-        
+
         //const almacenado = localStorage.getItem('cursos');
-        
+
         // Si hay datos, los convertimos de JSON (texto) a un Array de objetos JS. 
         // Si no hay nada, inicializamos un array vacío.
         //this.cursos = almacenado ? JSON.parse(almacenado) : [];
@@ -15,10 +15,10 @@ class CursosController {
     }
 
 
-     //// GET: Obtener todos desde el Back
+    //// GET: Obtener todos desde el Back
     async obtenerTodos() {
         try {
-            const respuesta = await fetch(this.apiUrl);
+            const respuesta = await fetch(`${this.apiUrl}/cursos`);
             if (!respuesta.ok) throw new Error("Error al obtener datos");
             return await respuesta.json();
         } catch (error) {
@@ -29,7 +29,7 @@ class CursosController {
     // POST: Guardar en la BD del Back
     async agregarCurso(curso) {
         try {
-            const respuesta = await fetch(this.apiUrl, {
+            const respuesta = await fetch(`${this.apiUrl}/cursos`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(curso)
@@ -41,7 +41,6 @@ class CursosController {
     }
 //Conecta con @DeleteMapping("/borrar-curso/{idCurso}") en Java
     async eliminarCurso(id) {
-        console.log("El id es: " + id)
         try {
             // Realizamos la petición al servidor
             const respuesta = await fetch(`${this.apiUrl}/borrar-curso/${id}`, {
@@ -63,20 +62,20 @@ class CursosController {
     /**
      * Crea un nuevo curso y lo añade a la lista.
      * Usa desestructuración de objetos para recibir los parámetros.
-     *//*
-    agregarCurso({titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl}) {
+     */
+    agregarCurso({ titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl }) {
         // Generamos un ID único basado en el timestamp actual (milisegundos)
         const id = Date.now();
-        
+
         // Creamos el nuevo objeto de curso
-        const curso = {id, titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl};
-        
+        const curso = { id, titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl };
+
         // Lo añadimos al array de la clase
         this.cursos.push(curso);
-        
+
         // Guardamos los cambios en localStorage
         this.guardar();
-    }*/
+    }
 
     /**
      * Convierte el array de objetos a una cadena JSON y lo guarda en el navegador.
@@ -120,18 +119,18 @@ class CursosController {
     actualizarCurso(id, datosActualizados) {
         // Buscamos la posición del curso en el array
         const index = this.cursos.findIndex(curso => curso.id === id);
-        
+
         if (index !== -1) {
             // Utilizamos el "Spread Operator" (...) para mantener el ID original 
             // y mezclar los datos antiguos con los nuevos datos recibidos.
             this.cursos[index] = { ...this.cursos[index], ...datosActualizados };
-            
+
             // Persistimos los cambios
             this.guardar();
             return true;
         }
         return false;
-    } 
+    }
 }
 */
 }
