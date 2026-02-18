@@ -79,6 +79,7 @@ async function init() {
             i++
     }
 }
+document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
 
 // Funciones para desplegar mensaje al añadir al carrito
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
@@ -103,7 +104,8 @@ if (alertTrigger) {
     //appendAlert('Producto añadido al carrito', 'secondary')
     const storedCarrito = localStorage.getItem('miCarrito');
     let carrito = storedCarrito ? JSON.parse(storedCarrito) : [];
-    let existe = false;
+    
+    /* let existe = false;
   for(let i = 0; i<carrito.length;i++){
     if (carrito[i].id == id)
       existe = true;
@@ -114,12 +116,22 @@ if (alertTrigger) {
   }
   else{
       appendAlert('Ya existe en el carrito', 'danger');
-  }
+  } */
+    let existe = carrito.some(item => item && item.idCurso == id);
+
+    if (!existe) {
+        appendAlert('Producto añadido al carrito', 'secondary');
+        agregarCarrito(id, carrito);
+        //console.log(carrito);
+    } else {
+        appendAlert('Este curso ya está en tu carrito', 'warning');
+    }
+
     //agregarCarrito(id,carrito)
   })
 }
 
-async function agregarCarrito(id,carrito){
+/* async function agregarCarrito(id,carrito){
   //const alertTrigger = document.getElementById('liveAlertBtn')
   const productos = await getProducts();
   
@@ -134,6 +146,49 @@ async function agregarCarrito(id,carrito){
   //Object.assign(carrito,cursoSeleccionado);
   localStorage.setItem('miCarrito', JSON.stringify(carrito));
 
+} */
+async function agregarCarrito(id, carrito) {
+  // Obtenemos los productos desde el Back (usando tu productController.js)
+  const productos = await getCursos(); 
+  // IMPORTANTE: Cambiamos 'curso.id' por 'curso.idCurso' 
+  const cursoSeleccionado = productos.find(curso => curso.idCurso == id);
+  
+ /*  if (!productos || productos.length === 0) {
+    console.error("No se pudieron cargar los productos");
+    return;
+  }
+ */
+  if (cursoSeleccionado) {
+    // Revisamos si ya existe un objeto en el carrito con el mismo ID Y la misma MODALIDAD
+    const yaExiste = carrito.some(item => 
+      item.idCurso === cursoSeleccionado.idCurso && 
+      item.modalidadCurso === cursoSeleccionado.modalidadCurso
+    );
+    if (yaExiste) {
+      alert("Este curso (en esta modalidad) ya está en tu carrito.");
+      return; // Detenemos la ejecución para que no se agregue
+    }
+    // si no existe
+    // Creamos un objeto estandarizado antes de meterlo al carrito
+      const productoParaCarrito = {
+          idCurso: cursoSeleccionado.idCurso,
+          titulo: cursoSeleccionado.nombreCurso,
+          precio: cursoSeleccionado.costoCurso,
+          imagenUrl: cursoSeleccionado.urlImagenCurso,
+          modalidad: cursoSeleccionado.modalidadCurso,
+          tipo: "Curso"
+      };
+      carrito.push(productoParaCarrito);
+      // Guardamos en el localStorage usando el nombre que usa tu carrito.js ('miCarrito')
+      localStorage.setItem('miCarrito', JSON.stringify(carrito));
+      console.log("Producto agregado con éxito");
+      console.log(productoParaCarrito);
+      // Feedback visual
+      //alert(`Agregado: ${productoParaCarrito.titulo}`);
+  } else {
+      console.error("No se encontró el curso con ID:", id);
+      alert("Hubo un error al intentar agregar el curso.");
+  }
 }
 
 async function initRecursos() {

@@ -20,7 +20,7 @@ const total = document.getElementById('total'); */
 let indiceAEliminar = null; 
 function init(){ // Función init se ejecuta cuando a cargado el resto del HTML
   const datosGuardados = localStorage.getItem('miCarrito'); //Cargamos el carrito de Local Storage para renderizarlo
-  console.log(datosGuardados);
+  //console.log(datosGuardados);
   const productos = JSON.parse(datosGuardados) || []; // Si no hay nada, devuelve un vector vacío.
   const contenedorProductos = document.getElementById("contenedor-productos"); //Obtenemos la referencia del contenedor
   const contenedorResumen = document.getElementById("contenedor-desglose");
@@ -32,6 +32,8 @@ function init(){ // Función init se ejecuta cuando a cargado el resto del HTML
   let precioFinal = 0;
   if(productos.length){
     productos.forEach((producto, index) => {
+      // VALIDACIÓN: Si por alguna razón el producto es null, saltarlo
+        if (!producto || !producto.titulo) return;
       contenidoProductos += `
       <div class="card tarjeta-interna">
         <div class="card-body">
@@ -72,9 +74,9 @@ function init(){ // Función init se ejecuta cuando a cargado el resto del HTML
           <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex">
           <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Mercado_Pago.svg" alt="Mercado Pago" style="height: calc(3vmin * 1.5);"> -->
         </div>
-        <button class="btn btn-continuar">
+        <button id="btn-continuar" class="btn btn-continuar">
           Continuar compra
-        </button>`
+        </button>`;
 }else{
     contenidoProductos = `<h6 class="fw-bold">Carrito vacío</h6><p class="conceptos">Ups! Por favor agrega un producto al carrito para comprar.</p>
     <p class="conceptos">Para ayudarte a comenzar, puedes revisar los cursos en la barra de navegación, ¡Tenemos cursos para todos los niveles!</p>
@@ -103,6 +105,28 @@ function init(){ // Función init se ejecuta cuando a cargado el resto del HTML
   }
   contenedorProductos.innerHTML = contenidoProductos;
   contenedorResumen.innerHTML = contenidoResumen;
+
+  const btnContinuar = document.getElementById('btn-continuar');
+  if (btnContinuar) {
+      btnContinuar.addEventListener('click', async () => {
+          const carritoCtrl = new CarritoController();
+          
+          // Supongamos que el ID del usuario viene de tu sesión o un storage
+          const idUsuarioActivo = JSON.parse(localStorage.getItem('usuario'))?.id || 1; 
+
+          // Llamamos al método que hace el fetch al backend
+          const exito = await carritoCtrl.finalizarCompra(idUsuarioActivo);
+
+          if (exito) {
+              alert("¡Compra procesada con éxito!");
+              localStorage.removeItem('miCarrito'); // Limpiamos el carrito local
+              window.location.href = "/pages/carrito.html";
+          } else {
+              alert("Error al conectar con el servidor.");
+          }
+      });
+  }
+
   }
 
   document.addEventListener('DOMContentLoaded',init);
