@@ -94,7 +94,7 @@ async function init() {
     botonLupa.addEventListener('click', () => { 
         const texto = inputBusqueda.value.toLowerCase().trim();
         console.log(texto) //trim borra los espacios en blanco
-        const filtrados = recursos.filter(recurso => recurso.titulo.toLowerCase().includes(texto) || recurso.descripcion.toLowerCase().includes(texto)); //Filtra de acuerdo al input del usuario
+        const filtrados = recursos.filter(recurso => recurso.nombreRecurso.toLowerCase().includes(texto) || recurso.descripcionRecurso.toLowerCase().includes(texto)); //Filtra de acuerdo al input del usuario
         
         if (filtrados.length === 0) { //Desplegar mensaje en caso de que no haya ninguna respuesta compatible
             contenedor.innerHTML = `<div class="alert alert-light">Sin coincidencias para ${texto}</div>`; 

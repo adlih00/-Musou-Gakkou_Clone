@@ -1,19 +1,18 @@
 import { getCursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 import { getCarrito } from './productController.js';
 import { getCurso } from './productController.js';
-//Ejemplo de un producto en JSON para referencia
- /* {
-    "id": 1768868706812,
-    "tipo": "Curso",
-    "titulo": "N5 Principiante",
-    "descripcion": "Conoces los kanjis",
-    "precio": 2000,
-    "horario": "Sabatino",
-    "fechaInicio": "2026-01-23",
-    "imagenUrl": "https://i.ibb.co/dwbsg2Sp/N5curso.jpg",
-    "imagenUrl": "/assets/img/img-cursos/n5.jpeg",
-    "calificacion" : "5"
-  }*/
+import { getRecursos } from './productController.js';
+import { getRecurso } from './productController.js';
+
+const path = window.location.pathname;
+if (path.includes("Recurso")){
+  document.addEventListener('DOMContentLoaded', initRecursos)
+  console.log("initRecurso")
+}
+else{
+  document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
+  console.log("initCurso")
+}
 
 async function init() {
     const productos = await getCursos(); // Esperamos la info
@@ -80,7 +79,6 @@ async function init() {
             i++
     }
 }
-document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
 
 // Funciones para desplegar mensaje al añadir al carrito
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
@@ -136,4 +134,70 @@ async function agregarCarrito(id,carrito){
   //Object.assign(carrito,cursoSeleccionado);
   localStorage.setItem('miCarrito', JSON.stringify(carrito));
 
+}
+
+async function initRecursos() {
+    const productos = await getRecursos(); // Esperamos la info
+    console.log(productos); //Imprime para debug
+    if (!productos) return; // Si no carga la info, no hace nada
+    const queryParams = new URLSearchParams(window.location.search); // Recupera la URL
+    const recursoId = queryParams.get('id'); //Separa el ID del curso de la URL
+    console.log(recursoId);
+
+    // Buscamos el curso específico dentro de los productos
+    //const cursoSeleccionado = productos.find(curso => curso.id == cursoId);
+
+    const recursoSeleccionado = await getRecurso(recursoId);
+    if (!recursoSeleccionado) return;
+    console.log(recursoSeleccionado);
+    //Se obtiene la referencia de los contenedores HTML
+    const contenedorTitulo = document.getElementById("contenedor-titulo")
+    const contenedorImagenSeleccionada = document.getElementById("contenedor-imagen-curso")
+    const contenedorPrecio = document.getElementById("contenedor-precio")
+    const contenedorInfoAdicional = document.getElementById("contenedor-info-adicional");
+    const contenedoresExtra =[document.getElementById("contenedor-tarjeta1"),document.getElementById("contenedor-tarjeta2"),document.getElementById("contenedor-tarjeta3"),document.getElementById("contenedor-tarjeta4")]
+    /*const contenedorExtra1 = document.getElementById("contenedor-tarjeta1")
+    const contenedorExtra2 = document.getElementById("contenedor-tarjeta2")
+    const contenedorExtra3 = document.getElementById("contenedor-tarjeta3")
+    const contenedorExtra4 = document.getElementById("contenedor-tarjeta4")*/
+
+    //Filtramos para las tarjetas de abajo
+    const otrosProductos = productos.filter(producto => producto.id != recursoId)
+    const max = otrosProductos.length;
+    const min = 0;
+    const productosNoRepetidos = new Set();
+    while (productosNoRepetidos.size < 4 && productosNoRepetidos.size < max){ //Seleccionamos elementos random y validamos que no se repitan
+            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+            productosNoRepetidos.add(otrosProductos[randomNumber]);
+            productosNoRepetidos.forEach(elemento =>{
+                if (elemento == undefined){
+                    productosNoRepetidos.delete(elemento)
+                }
+            }
+
+            )
+    }
+    //const productosNoRepetidosArray = [...productosNoRepetidos]
+    console.log(productosNoRepetidos)
+
+    //Se coloca la información del producto seleccionado en los contenedores
+    contenedorTitulo.innerHTML = recursoSeleccionado.nombreRecurso;
+    contenedorImagenSeleccionada.src = recursoSeleccionado.urlImagenRecurso;
+    contenedorPrecio.innerHTML = `$${recursoSeleccionado.costoRecurso} MXN`
+    contenedorInfoAdicional.innerHTML = recursoSeleccionado.detalleRecurso;
+    let i = 0;
+    for (const elemento of productosNoRepetidos){
+        contenedoresExtra[i].innerHTML =
+        `
+        <a href="./pages/detalleRecurso.html?id=${elemento.idRecurso}">
+            <div class="card tarjeta-curso h-100">
+                <img src="${elemento.urlImagenRecurso}" class="card-img-top imagen-curso-extra" alt="${elemento.nombreRecurso}">
+                <div class="card-body d-none d-lg-block">
+                    <h5 class="card-title">${elemento.nombreRecurso}</h5>
+                    <p class="card-text fw-bold">$${elemento.costoRecurso}</p>
+                </div>
+            </div>
+        </a>`
+            i++
+    }
 }

@@ -1,69 +1,6 @@
 import { getCursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 
-//JSON improvisado para pruebas
-/* let cursos =  [
-    {
-        "id": "1",
-        "name": "Curso N5",
-        "description": "Curso",
-        "imgRoute": "/assets/img/img-cursos/n5.jpeg",
-        "cost": "4000",
-        "stars": "4.5"
-    },
-    {
-        "id": "2",
-        "name": "Curso N4",
-        "description": "Curso",
-        "imgRoute": "/assets/img/img-cursos/n4.jpeg",
-        "cost": "4500",
-        "stars": "4"
-    },
-    {
-        "id": "3",
-        "name": "Curso N3",
-        "description": "Curso",
-        "imgRoute": "/assets/img/img-cursos/n3.jpeg",
-        "cost": "5000",
-        "stars": "3"
-    },
-    {
-        "id": "4",
-        "name": "Curso N2",
-        "description": "Curso",
-        "imgRoute": "/assets/img/img-cursos/n2.jpeg",
-        "cost": "5500",
-        "stars": "5"
-    },
-    {
-        "id": "5",
-        "name": "Curso N1",
-        "description": "Curso",
-        "imgRoute": "/assets/img/img-cursos/n1.jpeg",
-        "cost": "6000",
-        "stars": "2"
-    },
-    {
-        "id": "6",
-        "name": "Clase personalizada",
-        "description": "Curso",
-        "imgRoute": "/assets/img/img-cursos/clase-personalizada.jpeg",
-        "cost": "500",
-        "stars": "1"
-    }
-] */
-// Funcion asíncrona para cargar info del JSON
-/* async function loadData() {
-    try {
-        const response = await fetch('/assets/json/cursos.json'); // Ubicación del JSON
-        if (!response.ok) throw new Error('Network response was not ok'); // Si por alguna razón falla
-        const data = await response.json(); //Esperar la respuesta
-        return data;  //Envia la información para trabajar con ella
-    } catch (error) {
-        console.error('There was a problem fetching the JSON:', error);//Mensaje de error
-    }
-} */
 
-// Debemos esperar a que se reciba la información para después trabajar con ella
 async function init() {
     const cursos = await getCursos(); // Esperamos la info
      console.log(cursos); //Imprime para debug
@@ -104,7 +41,11 @@ async function init() {
 }
 
 // Se asegura de que el js actúe DESPUES de haber cargado el HTML
+
 document.addEventListener('DOMContentLoaded', init);
+
+
+
     function generarHTML(lista){ // Función para  generar y actualizar HTML según lo filtrado
     let contenido = ""; //Inicializamos variable 
     //Reescribe el HTML con el contenido reordenado

@@ -41,7 +41,10 @@
                         <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro" type="button" role="tab">Registrar Nuevo</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" id="gestion-tab" data-bs-toggle="tab" data-bs-target="#gestion" type="button" role="tab">Gestionar Curso</button>
+                        <button class="nav-link" id="gestion-cursos-tab" data-bs-toggle="tab" data-bs-target="#gestion-cursos" type="button" role="tab">Gestionar Cursos</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="gestion-recursos-tab" data-bs-toggle="tab" data-bs-target="#gestion-recursos" type="button" role="tab">Gestionar Recursos</button>
                     </li>
                 </ul>
 
@@ -103,7 +106,7 @@
                         </form>
                     </div>
 
-                    <div class="tab-pane fade" id="gestion" role="tabpanel">
+                    <div class="tab-pane fade" id="gestion-cursos" role="tabpanel">
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-dark">
@@ -116,6 +119,23 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tablaCursosCuerpo">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="gestion-recursos" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Imagen</th>
+                                        <th>Título</th>
+                                        <th>Precio</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaRecursosCuerpo">
                                     </tbody>
                             </table>
                         </div>
@@ -135,12 +155,12 @@
                     <div id="mensaje" class="mt-2"></div>
                 </div>
 
-                <!-- Pestaña de editar -->
+                <!-- Pestaña de editar Curso -->
                 <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editarModalLabel">Editar Producto</h5>
+                        <h5 class="modal-title" id="editarModalLabel">Editar Curso</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -179,6 +199,48 @@
                             <div class="col-md-6 form-group mb-2">
                             <label for="editFechaFin">Fecha Fin</label>
                             <input type="date" id="editFechaFin" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer px-0 pb-0 mt-3">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Pestaña de editar Recurso -->
+                <div class="modal fade" id="editarModalRecurso" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarModalLabel">Editar Recurso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editarRecursoFormulario">
+                        <input type="hidden" id="editIdRecurso"> <div class="form-group mb-2">
+                            <label for="editTituloRecurso">Título</label>
+                            <input type="text" id="editTituloRecurso" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="editDescripcionRecurso">Descripción Corta</label>
+                            <textarea id="editDescripcionRecurso" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="editDetalleRecurso">Detalle</label>
+                            <textarea id="editDetalleRecurso" class="form-control" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-2">
+                            <label for="editPrecioRecurso">Precio</label>
+                            <input type="double" id="editPrecioRecurso" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 form-group mb-2">
+                            <label for="editImagenRecurso">Imagen (URL)</label>
+                            <input type="url" id="editImagenRecurso" class="form-control" required>
                             </div>
                         </div>
                         <div class="modal-footer px-0 pb-0 mt-3">

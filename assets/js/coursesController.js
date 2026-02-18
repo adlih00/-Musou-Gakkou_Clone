@@ -59,11 +59,31 @@ class CursosController {
         }
     }
 
+    //Conecta con @DeleteMapping("/borrar-recurso/{idRecurso}") en Java
+    async eliminarRecurso(id) {
+        try {
+            // Realizamos la petición al servidor
+            const respuesta = await fetch(`${this.apiUrl}/borrar-recurso/${id}`, {
+                method: 'DELETE'
+            });
+            // Si el status es 204 (No Content), fue un éxito total.
+            // No intentes hacer await respuesta.json() porque lanzará error.
+            if (respuesta.status === 204 || respuesta.ok) {
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error("Error en el DELETE:", error);
+            return false;
+        }
+    }
+
     /**
      * Crea un nuevo curso y lo añade a la lista.
      * Usa desestructuración de objetos para recibir los parámetros.
      */
-    agregarCurso({ titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl }) {
+    /*agregarCurso({ titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl }) {
         // Generamos un ID único basado en el timestamp actual (milisegundos)
         const id = Date.now();
 
@@ -74,7 +94,7 @@ class CursosController {
         this.cursos.push(curso);
 
         // Guardamos los cambios en localStorage
-        this.guardar();
+        this.guardar();*/
     }
 
     /**
