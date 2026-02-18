@@ -1,5 +1,6 @@
-import { getProducts } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+import { getCursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 import { getCarrito } from './productController.js';
+import { getCurso } from './productController.js';
 //Ejemplo de un producto en JSON para referencia
  /* {
     "id": 1768868706812,
@@ -15,7 +16,7 @@ import { getCarrito } from './productController.js';
   }*/
 
 async function init() {
-    const productos = await getProducts(); // Esperamos la info
+    const productos = await getCursos(); // Esperamos la info
     // console.log(productos); //Imprime para debug
     if (!productos) return; // Si no carga la info, no hace nada
     const queryParams = new URLSearchParams(window.location.search); // Recupera la URL
@@ -23,7 +24,11 @@ async function init() {
     console.log(cursoId);
 
     // Buscamos el curso específico dentro de los productos
-    const cursoSeleccionado = productos.find(curso => curso.id == cursoId);
+    //const cursoSeleccionado = productos.find(curso => curso.id == cursoId);
+
+    const cursoSeleccionado = await getCurso(cursoId);
+    if (!cursoSeleccionado) return;
+    console.log(cursoSeleccionado);
     //Se obtiene la referencia de los contenedores HTML
     const contenedorTitulo = document.getElementById("contenedor-titulo")
     const contenedorImagenSeleccionada = document.getElementById("contenedor-imagen-curso")
@@ -55,20 +60,20 @@ async function init() {
     console.log(productosNoRepetidos)
 
     //Se coloca la información del producto seleccionado en los contenedores
-    contenedorTitulo.innerHTML = cursoSeleccionado.titulo;
-    contenedorImagenSeleccionada.src = cursoSeleccionado.imagenUrl;
-    contenedorPrecio.innerHTML = `$${cursoSeleccionado.precio}.00 MXN`
-    contenedorInfoAdicional.innerHTML = cursoSeleccionado.detalle;
+    contenedorTitulo.innerHTML = cursoSeleccionado.nombreCurso;
+    contenedorImagenSeleccionada.src = cursoSeleccionado.urlImagenCurso;
+    contenedorPrecio.innerHTML = `$${cursoSeleccionado.costoCurso} MXN`
+    contenedorInfoAdicional.innerHTML = cursoSeleccionado.detalleCurso;
     let i = 0;
     for (const elemento of productosNoRepetidos){
         contenedoresExtra[i].innerHTML =
         `
-        <a href="./pages/detalleCurso.html?id=${elemento.id}">
+        <a href="./pages/detalleCurso.html?id=${elemento.idCurso}">
             <div class="card tarjeta-curso h-100">
-                <img src="${elemento.imagenUrl}" class="card-img-top imagen-curso-extra" alt="${elemento.titulo}">
+                <img src="${elemento.urlImagenCurso}" class="card-img-top imagen-curso-extra" alt="${elemento.nombreCurso}">
                 <div class="card-body d-none d-lg-block">
-                    <h5 class="card-title">${elemento.titulo} ${elemento.horario}</h5>
-                    <p class="card-text fw-bold">$${elemento.precio}</p>
+                    <h5 class="card-title">${elemento.nombreCurso} ${elemento.modalidadCurso}</h5>
+                    <p class="card-text fw-bold">$${elemento.costoCurso}</p>
                 </div>
             </div>
         </a>`

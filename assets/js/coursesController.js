@@ -11,7 +11,7 @@ class CursosController {
         // Si hay datos, los convertimos de JSON (texto) a un Array de objetos JS. 
         // Si no hay nada, inicializamos un array vacío.
         //this.cursos = almacenado ? JSON.parse(almacenado) : [];
-        this.apiUrl = "https://localhost:8080/api/v1/cursos";
+        this.apiUrl = "http://localhost:8080/api/v1";
     }
 
 
@@ -39,20 +39,31 @@ class CursosController {
             console.error("Error en el POST:", error);
         }
     }
-    /**
-     * Elimina un curso del array y actualiza el almacenamiento.
-     * @param {number} id - El identificador único del curso a borrar.
-     */
-    eliminarCurso(id) {
-        // Filtramos el array para dejar fuera el elemento que coincida con el ID
-        this.cursos = this.cursos.filter(curso => curso.id !== id);
-        this.guardar();
+//Conecta con @DeleteMapping("/borrar-curso/{idCurso}") en Java
+    async eliminarCurso(id) {
+        console.log("El id es: " + id)
+        try {
+            // Realizamos la petición al servidor
+            const respuesta = await fetch(`${this.apiUrl}/borrar-curso/${id}`, {
+                method: 'DELETE'
+            });
+            // Si el status es 204 (No Content), fue un éxito total.
+            // No intentes hacer await respuesta.json() porque lanzará error.
+            if (respuesta.status === 204 || respuesta.ok) {
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error("Error en el DELETE:", error);
+            return false;
+        }
     }
 
     /**
      * Crea un nuevo curso y lo añade a la lista.
      * Usa desestructuración de objetos para recibir los parámetros.
-     */
+     *//*
     agregarCurso({titulo, tipo, descripcion, detalle, precio, horario, calificacion, fechaInicio, imagenUrl}) {
         // Generamos un ID único basado en el timestamp actual (milisegundos)
         const id = Date.now();
@@ -65,11 +76,11 @@ class CursosController {
         
         // Guardamos los cambios en localStorage
         this.guardar();
-    }
+    }*/
 
     /**
      * Convierte el array de objetos a una cadena JSON y lo guarda en el navegador.
-     */
+     *//*
     guardar() {
         localStorage.setItem('cursos', JSON.stringify(this.cursos));
     }
@@ -77,7 +88,7 @@ class CursosController {
     /**
      * Devuelve la lista completa de cursos actualmente cargados.
      * @returns {Array} Lista de objetos de cursos.
-     */
+     *//*
     obtenerTodos() {
         return this.cursos;
     }
@@ -86,7 +97,7 @@ class CursosController {
      * Reemplaza toda la base de datos actual con un nuevo arreglo de datos.
      * Útil para la función de "Cargar JSON".
      * @param {Array} arregloJson - El nuevo arreglo de datos a importar.
-     */
+     *//*
     importarCursos(arregloJson) {
         this.cursos = arregloJson;
         this.guardar();
@@ -95,7 +106,7 @@ class CursosController {
     /**
      * Convierte la lista de cursos a un formato de texto legible para exportar a archivo.
      * @returns {string} JSON formateado con sangría de 2 espacios.
-     */
+     *//*
     exportarCursos() {
         return JSON.stringify(this.cursos, null, 2);
     }
@@ -105,7 +116,7 @@ class CursosController {
      * @param {number} id - ID del curso a editar.
      * @param {Object} datosActualizados - Objeto con los nuevos valores.
      * @returns {boolean} True si se actualizó, False si no se encontró el ID.
-     */
+     *//*
     actualizarCurso(id, datosActualizados) {
         // Buscamos la posición del curso en el array
         const index = this.cursos.findIndex(curso => curso.id === id);
@@ -121,4 +132,6 @@ class CursosController {
         }
         return false;
     } 
+}
+*/
 }

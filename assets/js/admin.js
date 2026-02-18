@@ -1,4 +1,5 @@
-import { getProducts } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+import { getCursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+import { getCurso } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 
 // Referencia al cuerpo de la tabla donde se mostrarán los productos
 const tablaCursosCuerpo = document.getElementById("tablaCursosCuerpo");
@@ -18,7 +19,7 @@ async function renderizarTabla() {
     
     // Obtiene el array de objetos desde el controlador
     //const lista = cursosController.obtenerTodos();
-    const lista = await getProducts();
+    const lista = await getCursos();
     console.log(lista);
     if (!lista) return;
 
@@ -48,18 +49,22 @@ async function renderizarTabla() {
  * 2. Carga los datos de un producto específico en el formulario del Modal
  * Se usa 'window.' para que la función sea accesible desde el atributo 'onclick' del HTML
  */
-window.prepararEdicion = (id) => {
+window.prepararEdicion = async (id) => {
     // Busca el objeto exacto en la lista mediante su ID
-    const curso = cursosController.obtenerTodos().find(c => c.id === id);
+    const curso = await getCurso(id);
+    console.log(curso.idCurso);
     
     if (curso) {
         // Asigna los valores del objeto a los inputs del formulario modal
-        document.getElementById('editId').value = curso.id;
-        document.getElementById('editTitulo').value = curso.titulo;
-        document.getElementById('editDescripcion').value = curso.descripcion;
-        document.getElementById('editPrecio').value = curso.precio;
-        document.getElementById('editImagen').value = curso.imagenUrl;
-        
+        document.getElementById('editId').value = curso.idCurso;
+        document.getElementById('editTitulo').value = curso.nombreCurso;
+        document.getElementById('editDescripcion').value = curso.descripcionCurso;
+        document.getElementById('editDetalle').value = curso.detalleCurso;
+        document.getElementById('editPrecio').value = curso.costoCurso;
+        document.getElementById('editModalidad').value = curso.modalidadCurso;
+        document.getElementById('editImagen').value = curso.urlImagenCurso;
+        //document.getElementById('editFechaInicio').value = curso.inicioCurso;
+        //document.getElementById('editFechaFin').value = curso.finCurso;
         // Inicializa y muestra el modal usando la librería de Bootstrap 5
         const modal = new bootstrap.Modal(document.getElementById('editarModal'));
         modal.show();
@@ -70,43 +75,88 @@ window.prepararEdicion = (id) => {
  * 3. Escucha el envío (submit) del formulario de edición dentro del modal
  */
 const editForm = document.getElementById('editarCursoFormulario');
-editForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Evita que la página se recargue
+editForm.addEventListener('submit', async (e) => {
+    let API_URL = `http://localhost:8080/api/v1/update-curso/${document.getElementById('editId').value}`
+    console.log(API_URL);
+    //prompt(API_URL);
+   e.preventDefault(); // Evita que la página se recargue
     
     // Recupera el ID (oculto) y los nuevos datos ingresados
-    const id = parseInt(document.getElementById('editId').value);
+    //const id = parseInt(document.getElementById('editId').value);
     const datos = {
-        titulo: document.getElementById('editTitulo').value,
-        descripcion: document.getElementById('editDescripcion').value,
-        precio: parseFloat(document.getElementById('editPrecio').value),
-        imagenUrl: document.getElementById('editImagen').value
+        nombreCurso: document.getElementById('editTitulo').value,
+        detalleCurso: document.getElementById('editDetalle').value,
+        descripcionCurso: document.getElementById('editDescripcion').value,
+        inicioCurso: document.getElementById('editFechaInicio').value,
+        modalidadCurso: document.getElementById('editModalidad').value,
+        finCurso: document.getElementById('editFechaFin').value,
+        costoCurso: parseFloat(document.getElementById('editPrecio').value),
+        urlImagenCurso: document.getElementById('editImagen').value
     };
 
+    try {
+        const res = await fetch(API_URL, {
+            method: 'PUT', // Change method to PUT
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!res.ok) {
+            throw new Error(`Error updating: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('Curso actualizado con éxito:', data);
+        alert('¡Curso actualizado!');
+        renderizarTabla()
+
+    } catch (err) {
+        console.error('Error:', err);
+        alert('No se pudo actualizar el curso.');
+    }
+
     // Intenta actualizar a través del controlador
-    if (cursosController.actualizarCurso(id, datos)) {
-        alert('Producto actualizado con éxito');
+    //if (cursosController.actualizarCurso(id, datos)) {
+        //alert('Producto actualizado con éxito');
         
         // Cierra el modal programáticamente
-        const modalElement = document.getElementById('editarModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
-        modalInstance.hide();
+       // const modalElement = document.getElementById('editarModal');
+       // const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        //modalInstance.hide();
         
         // Refresca la tabla para mostrar los datos actualizados
-        renderizarTabla();
-    }
+        //renderizarTabla();
+    //}
 });
 
 /**
- * Función global para eliminar un registro
+ * Función global asíncrona para eliminar un registro
  */
-window.borrarRegistro = (id) => {
-    // Pide confirmación al usuario antes de borrar
-    if (confirm("¿Seguro que quieres eliminar este producto?")) {
-        cursosController.eliminarCurso(id);
-        renderizarTabla(); // Actualiza la vista inmediatamente
+window.borrarRegistro = async (id) => {
+    
+    // 1. Pedimos confirmación al usuario
+    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este curso de la base de datos?");
+    
+    if (confirmacion) {
+        // Mostramos un mensaje opcional de "cargando" si lo deseas
+        console.log(`Eliminando curso con ID: ${id}...`);
+
+        // 2. Usamos 'await' para esperar a que el controlador termine la petición fetch
+        const exito = await cursosController.eliminarCurso(id);
+        
+        if (exito) {
+            alert("Curso eliminado correctamente.");
+            
+            // 3. Refrescamos la tabla inmediatamente para mostrar los cambios reales
+            // Como renderizarTabla() es async, también es buena práctica ponerle await
+            await renderizarTabla(); 
+        } else {
+            alert("Hubo un error al intentar eliminar el curso.");
+        }
     }
 };
-
 /**
  * Evento: Actualiza la tabla automáticamente cuando el usuario hace clic 
  * en la pestaña "Gestionar Existentes"
