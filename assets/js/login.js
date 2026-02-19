@@ -28,8 +28,14 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
             alert("Sesión iniciada con exito");
 
+            if (correoUsuario == "administrador@musou.com") {
+                // Redirigir a página admin
+                window.location.href = "pages/admin.html";
+            } else {
+
             // Redirigir a página cuenta
             window.location.href = "pages/cuenta.html";
+            }
 
         } else {
             alert("Credenciales incorrectas");
