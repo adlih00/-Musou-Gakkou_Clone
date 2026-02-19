@@ -3,6 +3,7 @@
 //import {navbar:navbarContent } from "./components/navbar"; // importanción nombrada
 import {navbar} from "./components/navbar.js";
 import {footer}  from "./components/footer.js";
+import { actualizarNavbar } from "./auth.js";
 const initApp = (ventana) =>{
     console.log("App Initialized");
     console.log(ventana);
@@ -12,6 +13,7 @@ const initApp = (ventana) =>{
     navbarContainer.innerHTML = navbar();
     footerContainer.innerHTML = footer();
     //setupEventListener();
+    actualizarNavbar();
 };
 
 export{initApp}; // Exportación nombrada

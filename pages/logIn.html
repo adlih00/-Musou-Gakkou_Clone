@@ -6,7 +6,7 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&display=swap" rel="stylesheet">
     <title>Log In</title>
-	  <link rel="icon" href="./assets/img/img-acercade/llamaMuso.ico">
+	  <link rel="icon" href="https://github.com/adlih00/-Musou-Gakkou_Clone/blob/develop/assets/img/img-acercade/llamaMuso.jpg?raw=true">
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 			</style>
@@ -28,19 +28,19 @@
 	<section class="contenedor-login">
 		<div class="contenedor-centrallogin">
 			<h1>Inicia Sesión o Regístrate</h1>
-			<form>
+			<form id="loginForm">
 				<div class="mb-3">
-					<label for="exampleInputEmail1"></label>
-					<input type="email" class="form-control" id="exampleInputEmail1" placeholder="email">
-				<div class="mb-3">
-					<label for="exampleInputPassword1"></label>
-					<input type="password" class="form-control" id="exampleInputPassword1" placeholder="contraseña">
+					<input type="email" class="form-control" id="correoUsuario" placeholder="email" required>
 				</div>
-				<button type="login" class="btn btn-primary">Iniciar sesión</button>
+				<div class="mb-3">
+					<input type="password" class="form-control" id="contrasenaUsuario" placeholder="contraseña" required>
+				</div>
+				<button type="submit" class="btn btn-primary">Iniciar sesión</button>
 				<p>¿No tienes cuenta? <u><a href="./pages/registro.html">Regístrate</a></u></p>
 			</form>
 		</div>
 	</section>
 	<footer id="footer"></footer> <!-- Footer Modularizado -->
+	<script src="../assets/js/login.js"></script>
 	</body>
 </html>

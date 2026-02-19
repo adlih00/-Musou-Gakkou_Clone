@@ -1,21 +1,22 @@
-import { getProducts } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+import { getCursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 import { getCarrito } from './productController.js';
-//Ejemplo de un producto en JSON para referencia
- /* {
-    "id": 1768868706812,
-    "tipo": "Curso",
-    "titulo": "N5 Principiante",
-    "descripcion": "Conoces los kanjis",
-    "precio": 2000,
-    "horario": "Sabatino",
-    "fechaInicio": "2026-01-23",
-    "imagenUrl": "https://i.ibb.co/dwbsg2Sp/N5curso.jpg",
-    "imagenUrl": "/assets/img/img-cursos/n5.jpeg",
-    "calificacion" : "5"
-  }*/
+import { getCurso } from './productController.js';
+import { getRecursos } from './productController.js';
+import { getRecurso } from './productController.js';
+import { getUsuario } from './userController.js';
+
+const path = window.location.pathname;
+if (path.includes("Recurso")){
+  document.addEventListener('DOMContentLoaded', initRecursos)
+  console.log("initRecurso")
+}
+else{
+  document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
+  console.log("initCurso")
+}
 
 async function init() {
-    const productos = await getProducts(); // Esperamos la info
+    const productos = await getCursos(); // Esperamos la info
     // console.log(productos); //Imprime para debug
     if (!productos) return; // Si no carga la info, no hace nada
     const queryParams = new URLSearchParams(window.location.search); // Recupera la URL
@@ -23,7 +24,11 @@ async function init() {
     console.log(cursoId);
 
     // Buscamos el curso específico dentro de los productos
-    const cursoSeleccionado = productos.find(curso => curso.id == cursoId);
+    //const cursoSeleccionado = productos.find(curso => curso.id == cursoId);
+
+    const cursoSeleccionado = await getCurso(cursoId);
+    if (!cursoSeleccionado) return;
+    console.log(cursoSeleccionado);
     //Se obtiene la referencia de los contenedores HTML
     const contenedorTitulo = document.getElementById("contenedor-titulo")
     const contenedorImagenSeleccionada = document.getElementById("contenedor-imagen-curso")
@@ -55,27 +60,27 @@ async function init() {
     console.log(productosNoRepetidos)
 
     //Se coloca la información del producto seleccionado en los contenedores
-    contenedorTitulo.innerHTML = cursoSeleccionado.titulo;
-    contenedorImagenSeleccionada.src = cursoSeleccionado.imagenUrl;
-    contenedorPrecio.innerHTML = `$${cursoSeleccionado.precio}.00 MXN`
-    contenedorInfoAdicional.innerHTML = cursoSeleccionado.detalle;
+    contenedorTitulo.innerHTML = cursoSeleccionado.nombreCurso;
+    contenedorImagenSeleccionada.src = cursoSeleccionado.urlImagenCurso;
+    contenedorPrecio.innerHTML = `$${cursoSeleccionado.costoCurso} MXN`
+    contenedorInfoAdicional.innerHTML = cursoSeleccionado.detalleCurso;
     let i = 0;
     for (const elemento of productosNoRepetidos){
         contenedoresExtra[i].innerHTML =
         `
-        <a href="./pages/detalleCurso.html?id=${elemento.id}">
+        <a href="./pages/detalleCurso.html?id=${elemento.idCurso}">
             <div class="card tarjeta-curso h-100">
-                <img src="${elemento.imagenUrl}" class="card-img-top imagen-curso-extra" alt="${elemento.titulo}">
+                <img src="${elemento.urlImagenCurso}" class="card-img-top imagen-curso-extra" alt="${elemento.nombreCurso}">
                 <div class="card-body d-none d-lg-block">
-                    <h5 class="card-title">${elemento.titulo} ${elemento.horario}</h5>
-                    <p class="card-text fw-bold">$${elemento.precio}</p>
+                    <h5 class="card-title">${elemento.nombreCurso} ${elemento.modalidadCurso}</h5>
+                    <p class="card-text fw-bold">$${elemento.costoCurso}</p>
                 </div>
             </div>
         </a>`
             i++
     }
 }
-document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
+//document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
 
 // Funciones para desplegar mensaje al añadir al carrito
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
@@ -93,14 +98,41 @@ const appendAlert = (message, type) => {
 
 const alertTrigger = document.getElementById('liveAlertBtn')
 if (alertTrigger) {
-  alertTrigger.addEventListener('click', () => {
+  alertTrigger.addEventListener('click', async () => {
     const queryParams = new URLSearchParams(window.location.search); // Recupera la URL
+    
+    
+    /*if (path.includes("Recurso")){
+        console.log("Es un recurso")
+        let usuario = await getUsuario(1);
+        console.log(usuario)
+    let { 
+    idUsuario, 
+    nombreUsuario, 
+    apellidoUsuario, 
+    correoUsuario, 
+    telefonoUsuario, 
+    rolUsuario,
+    ordenes,
+    resenas,
+    usuarioTieneCursos,
+    usuarioTieneRecursos 
+    } = usuario;
+
+
+    }
+    else{
+        console.log("Es un curso")*/
+
+
     const id = queryParams.get('id'); //Separa el ID del curso de la URL
     //console.log(id);
     //appendAlert('Producto añadido al carrito', 'secondary')
     const storedCarrito = localStorage.getItem('miCarrito');
+
     let carrito = storedCarrito ? JSON.parse(storedCarrito) : [];
-    let existe = false;
+    
+    /* let existe = false;
   for(let i = 0; i<carrito.length;i++){
     if (carrito[i].id == id)
       existe = true;
@@ -111,12 +143,23 @@ if (alertTrigger) {
   }
   else{
       appendAlert('Ya existe en el carrito', 'danger');
-  }
+  } */
+    let existe = carrito.some(item => item && item.idCurso == id);
+
+    if (!existe) {
+        appendAlert('Producto añadido al carrito', 'secondary');
+        agregarCarrito(id, carrito);
+        //console.log(carrito);
+    } else {
+        appendAlert('Este curso ya está en tu carrito', 'warning');
+    }
+
     //agregarCarrito(id,carrito)
-  })
+}
+  )
 }
 
-async function agregarCarrito(id,carrito){
+/* async function agregarCarrito(id,carrito){
   //const alertTrigger = document.getElementById('liveAlertBtn')
   const productos = await getProducts();
   
@@ -131,4 +174,130 @@ async function agregarCarrito(id,carrito){
   //Object.assign(carrito,cursoSeleccionado);
   localStorage.setItem('miCarrito', JSON.stringify(carrito));
 
+} */
+async function agregarCarrito(id, carrito) {
+  // Obtenemos los productos desde el Back (usando tu productController.js)
+  const cursos = await getCursos(); 
+  const recursos = await getRecursos(); 
+  // IMPORTANTE: Cambiamos 'curso.id' por 'curso.idCurso' 
+  let cursoSeleccionado =""
+  if (window.location.pathname.includes("Recurso")){
+  cursoSeleccionado = recursos.find(curso => curso.idRecurso == id)
+
+  }
+  else{
+  cursoSeleccionado = cursos.find(curso => curso.idCurso == id);
+}
+    console.log(cursoSeleccionado)
+ /*  if (!productos || productos.length === 0) {
+    console.error("No se pudieron cargar los productos");
+    return;
+  }
+ */
+  if (cursoSeleccionado) {
+    // Revisamos si ya existe un objeto en el carrito con el mismo ID Y la misma MODALIDAD
+    const yaExiste = carrito.some(item => 
+      item.idCurso === cursoSeleccionado.idCurso 
+    );
+    if (yaExiste) {
+      alert("Este curso ya está en tu carrito.");
+      return; // Detenemos la ejecución para que no se agregue
+    }
+    // si no existe
+    // Creamos un objeto estandarizado antes de meterlo al carrito
+    let productoParaCarrito = ""
+    if (window.location.pathname.includes("Recurso")){
+         productoParaCarrito = {
+          idCurso: cursoSeleccionado.idRecurso,
+          titulo: cursoSeleccionado.nombreRecurso,
+          precio: cursoSeleccionado.costoRecurso,
+          imagenUrl: cursoSeleccionado.urlImagenRecurso,
+          tipo: "Recurso"
+    } }else
+        {
+        productoParaCarrito = {
+          idCurso: cursoSeleccionado.idCurso,
+          titulo: cursoSeleccionado.nombreCurso,
+          precio: cursoSeleccionado.costoCurso,
+          imagenUrl: cursoSeleccionado.urlImagenCurso,
+          tipo: "Curso"
+      };
+    }
+      carrito.push(productoParaCarrito);
+      // Guardamos en el localStorage usando el nombre que usa tu carrito.js ('miCarrito')
+      localStorage.setItem('miCarrito', JSON.stringify(carrito));
+      console.log("Producto agregado con éxito");
+      console.log(productoParaCarrito);
+      // Feedback visual
+      //alert(`Agregado: ${productoParaCarrito.titulo}`);
+  } else {
+      console.error("No se encontró el curso con ID:", id);
+      alert("Hubo un error al intentar agregar el curso.");
+  }
+}
+
+async function initRecursos() {
+    const productos = await getRecursos(); // Esperamos la info
+    console.log(productos); //Imprime para debug
+    if (!productos) return; // Si no carga la info, no hace nada
+    const queryParams = new URLSearchParams(window.location.search); // Recupera la URL
+    const recursoId = queryParams.get('id'); //Separa el ID del curso de la URL
+    console.log(recursoId);
+
+    // Buscamos el curso específico dentro de los productos
+    //const cursoSeleccionado = productos.find(curso => curso.id == cursoId);
+
+    const recursoSeleccionado = await getRecurso(recursoId);
+    if (!recursoSeleccionado) return;
+    console.log(recursoSeleccionado);
+    //Se obtiene la referencia de los contenedores HTML
+    const contenedorTitulo = document.getElementById("contenedor-titulo")
+    const contenedorImagenSeleccionada = document.getElementById("contenedor-imagen-curso")
+    const contenedorPrecio = document.getElementById("contenedor-precio")
+    const contenedorInfoAdicional = document.getElementById("contenedor-info-adicional");
+    const contenedoresExtra =[document.getElementById("contenedor-tarjeta1"),document.getElementById("contenedor-tarjeta2"),document.getElementById("contenedor-tarjeta3"),document.getElementById("contenedor-tarjeta4")]
+    /*const contenedorExtra1 = document.getElementById("contenedor-tarjeta1")
+    const contenedorExtra2 = document.getElementById("contenedor-tarjeta2")
+    const contenedorExtra3 = document.getElementById("contenedor-tarjeta3")
+    const contenedorExtra4 = document.getElementById("contenedor-tarjeta4")*/
+
+    //Filtramos para las tarjetas de abajo
+    const otrosProductos = productos.filter(producto => producto.id != recursoId)
+    const max = otrosProductos.length;
+    const min = 0;
+    const productosNoRepetidos = new Set();
+    while (productosNoRepetidos.size < 4 && productosNoRepetidos.size < max){ //Seleccionamos elementos random y validamos que no se repitan
+            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+            productosNoRepetidos.add(otrosProductos[randomNumber]);
+            productosNoRepetidos.forEach(elemento =>{
+                if (elemento == undefined){
+                    productosNoRepetidos.delete(elemento)
+                }
+            }
+
+            )
+    }
+    //const productosNoRepetidosArray = [...productosNoRepetidos]
+    console.log(productosNoRepetidos)
+
+    //Se coloca la información del producto seleccionado en los contenedores
+    contenedorTitulo.innerHTML = recursoSeleccionado.nombreRecurso;
+    contenedorImagenSeleccionada.src = recursoSeleccionado.urlImagenRecurso;
+    contenedorPrecio.innerHTML = `$${recursoSeleccionado.costoRecurso} MXN`
+    contenedorInfoAdicional.innerHTML = recursoSeleccionado.detalleRecurso;
+    let i = 0;
+    for (const elemento of productosNoRepetidos){
+        contenedoresExtra[i].innerHTML =
+        `
+        <a href="./pages/detalleRecurso.html?id=${elemento.idRecurso}">
+            <div class="card tarjeta-curso h-100">
+                <img src="${elemento.urlImagenRecurso}" class="card-img-top imagen-curso-extra" alt="${elemento.nombreRecurso}">
+                <div class="card-body d-none d-lg-block">
+                    <h5 class="card-title">${elemento.nombreRecurso}</h5>
+                    <p class="card-text fw-bold">$${elemento.costoRecurso}</p>
+                </div>
+            </div>
+        </a>`
+            i++
+    }
 }

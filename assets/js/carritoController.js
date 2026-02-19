@@ -49,5 +49,30 @@ class CarritoController {
   guardar() {
     localStorage.setItem('carrito', JSON.stringify(this.carrito));
   }
+  async finalizarCompra(usuarioId) {
+    const datosGuardados = localStorage.getItem('miCarrito');
+    const productos = JSON.parse(datosGuardados) || [];
+    
+    // Mapeamos los productos al formato de Java
+    const nuevaOrden = {
+        totalOrden: productos.reduce((acc, p) => acc + p.precio, 0),
+        fechaOrden: new Date().toISOString(),
+        usuario: { idUsuario: parseInt(usuarioId) }, // Objeto usuario para la relación @ManyToOne
+        // Si tienes una relación @ManyToMany para los cursos:
+        ordenesTieneCursos: productos.map(p => ({ idCurso: p.idCurso || p.id })) 
+    };
+    console.log("Enviando esta orden:", nuevaOrden);
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/nueva-orden", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(nuevaOrden)
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error enviando la orden:", error);
+        return false;
+    }
+}
 
 }

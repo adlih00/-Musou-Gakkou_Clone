@@ -1,4 +1,5 @@
 //const fs = require('fs');
+import { agregarUsuario } from "./userController.js";
 document.getElementById("formRegistro").addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -6,8 +7,18 @@ document.getElementById("formRegistro").addEventListener("submit", function (e) 
     const apellido = document.getElementById("apellido").value.trim();
     const telefono = document.getElementById("telefono").value.trim();
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const password = encodeURIComponent(document.getElementById("password").value);
     const password2 = document.getElementById("password2").value;
+
+        const usuario ={
+    nombreUsuario: document.getElementById("nombre").value.trim(),
+     apellidoUsuario:  document.getElementById("apellido").value.trim(),
+     telefonoUsuario: document.getElementById("telefono").value.trim(),
+     correoUsuario: document.getElementById("email").value.trim(),
+     contrasenaUsuario:  document.getElementById("password").value,
+     rolUsuario: 3,
+     password2:document.getElementById("password2").value
+}
 
     const errores = {
         nombre: document.getElementById("errorNombre"),
@@ -59,5 +70,6 @@ document.getElementById("formRegistro").addEventListener("submit", function (e) 
 
     if (valido) {
         successMsg.textContent = "Usuario registrado con exito";
+        agregarUsuario(usuario);
     }
 });

@@ -193,7 +193,7 @@ const navbar = () =>{
                     <a class="boton" id="btn-Log-in"  href="./pages/logIn.html">Log in</a>
                   </li>
                   <li class="nav-item d-none d-lg-block">
-                    <a class="boton" href="./pages/registro.html">Regístrate</a>
+                    <a class="boton" id="btn-registrate" href="./pages/registro.html">Regístrate</a>
                   </li>
                 </ul>
                 

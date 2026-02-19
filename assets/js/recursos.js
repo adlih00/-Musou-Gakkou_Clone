@@ -1,4 +1,4 @@
-import { getProducts } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
+import { getRecursos } from './productController.js'; //Para llamar a la data del JSON que ya se recolectó
 
 //JSON improvisado para pruebas
 /* let cursos =  [
@@ -65,10 +65,10 @@ import { getProducts } from './productController.js'; //Para llamar a la data de
 
 // Debemos esperar a que se reciba la información para después trabajar con ella
 async function init() {
-    const productos = await getProducts(); // Esperamos la info
+    const recursos = await getRecursos(); // Esperamos la info
     // console.log(productos); //Imprime para debug
-    if (!productos) return; // Si no carga la info, no hace nada
-    let recursos = productos.filter(item => item.tipo === "Recurso"); // Separamos los cursos de los recursos
+    if (!recursos) return; // Si no carga la info, no hace nada
+    //let recursos = productos.filter(item => item.tipo === "Recurso"); // Separamos los cursos de los recursos
 
     const contenedor = document.getElementById("contenedor-recursos"); // Referencia del contenedor para manipular HTML
     const inputBusqueda = document.getElementById('input-busqueda'); // Referencia del buscador para filtrar input del usuario
@@ -82,9 +82,9 @@ async function init() {
     document.querySelectorAll('.btn-check').forEach(input => { // Filtrado por mejor valorado o mayor/menor precio
         input.addEventListener('change', (e) => {
             switch(e.target.id){
-                case "option1": recursos.sort((a, b) => b.calificacion - a.calificacion); break; //Mejor valorados
-                case "option2": recursos.sort((a, b) => a.precio - b.precio); break; //Mayor precio
-                case "option3": recursos.sort((a, b) => b.precio - a.precio); break; //Menor precio
+                //case "option1": recursos.sort((a, b) => b.calificacion - a.calificacion); break; //Mejor valorados
+                case "option2": recursos.sort((a, b) => a.costoRecurso - b.costoRecurso); break; //Mayor precio
+                case "option3": recursos.sort((a, b) => b.costoRecurso - a.costoRecurso); break; //Menor precio
             }
             contenedor.innerHTML = generarHTML(recursos); //Llama a la función para desplegar contenido filtrado
         });
@@ -94,7 +94,7 @@ async function init() {
     botonLupa.addEventListener('click', () => { 
         const texto = inputBusqueda.value.toLowerCase().trim();
         console.log(texto) //trim borra los espacios en blanco
-        const filtrados = recursos.filter(recurso => recurso.titulo.toLowerCase().includes(texto) || recurso.descripcion.toLowerCase().includes(texto)); //Filtra de acuerdo al input del usuario
+        const filtrados = recursos.filter(recurso => recurso.nombreRecurso.toLowerCase().includes(texto) || recurso.descripcionRecurso.toLowerCase().includes(texto)); //Filtra de acuerdo al input del usuario
         
         if (filtrados.length === 0) { //Desplegar mensaje en caso de que no haya ninguna respuesta compatible
             contenedor.innerHTML = `<div class="alert alert-light">Sin coincidencias para ${texto}</div>`; 
@@ -113,21 +113,21 @@ function generarHTML(lista){ // Función para  generar y actualizar HTML según 
     lista.forEach(recurso =>{ //for each para cada "tarjeta" o producto
       contenido += `
 					<div class="col-12 col-sm-6 col-md-4 col-lg-3 contenedor-tarjeta">
-					<a href="./pages/detalleCurso.html?id=${recurso.id}">
-						<div class="card tarjeta-curso h-100" id="${recurso.titulo}">
+					<a href="./pages/detalleRecurso.html?id=${recurso.idRecurso}">
+						<div class="card tarjeta-curso h-100" id="${recurso.nombreRecurso}">
 							<div class="bg"></div>
 							<div class="blob"></div>
 							<img 
-								src="${recurso.imagenUrl}" 
+								src="${recurso.urlImagenRecurso}" 
 								class="card-img-top">
 							<div class="card-body">
-								<h5 class="card-title">${recurso.titulo}</h5>
-								<p class="card-text">${recurso.descripcion}</p>
+								<h5 class="card-title">${recurso.nombreRecurso}</h5>
+								<p class="card-text">${recurso.descripcionRecurso}</p>
 							</div>
 						</div>
                     </a>
                     </div>`;
         });
-        console.log(contenido)
+        //console.log(contenido)??
     return contenido; //devuelve todo el String de HTML relleno con los parámetros que van cambiando
     }

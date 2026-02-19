@@ -9,10 +9,6 @@
 body{
     max-width: 100%;
 }
-.container-fluido {
-    /*Encabezado*/
-    padding-bottom: 55px;
-}
 
 .lateral {
     background-color: var(--rojo);
@@ -45,7 +41,7 @@ body{
     flex-direction: column;
     align-items: center;
     background-color: white;
-    padding-bottom: 60px;
+    padding-bottom: 1rem;
     /* Evita que la última fila toque el footer */
 }
 
