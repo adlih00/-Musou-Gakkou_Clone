@@ -80,6 +80,7 @@ async function init() {
             i++
     }
 }
+//document.addEventListener('DOMContentLoaded', init); //Esperamos a que el DOM cargue antes de intetar manipularlo
 
 // Funciones para desplegar mensaje al añadir al carrito
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
