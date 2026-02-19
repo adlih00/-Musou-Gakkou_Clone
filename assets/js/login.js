@@ -1,10 +1,13 @@
+
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
 
     e.preventDefault(); // evita recargar la página
 
-    const correoUsuario = document.getElementById("correoUsuario").value;
-    const contrasenaUsuario = document.getElementById("contrasenaUsuario").value;
-
+    let correoUsuario = document.getElementById("correoUsuario").value;
+    let contrasenaUsuario = document.getElementById("contrasenaUsuario").value;
+ 
+    console.log(correoUsuario);
+    console.log(contrasenaUsuario);
     try {
 
         const response = await fetch("http://localhost:8080/auth/login", {
@@ -12,7 +15,8 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: `correoUsuario=${encodeURIComponent(correoUsuario)}&contrasena=${encodeURIComponent(contrasenaUsuario)}`
+            body: `correoUsuario=${(correoUsuario)}&contrasena=${(contrasenaUsuario)}`
+            /*body: correoUsuario=`${encodeURIComponent(correoUsuario)}&contrasena=${encodeURIComponent(contrasenaUsuario)}`*/
         });
 
         if (response.status === 201) {

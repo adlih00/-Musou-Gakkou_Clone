@@ -120,7 +120,7 @@ function init(){ // Función init se ejecuta cuando a cargado el resto del HTML
           if (exito) {
               alert("¡Compra procesada con éxito!");
               localStorage.removeItem('miCarrito'); // Limpiamos el carrito local
-              window.location.href = "/pages/carrito.html";
+              window.location.href = "./pages/carrito.html";
           } else {
               alert("Error al conectar con el servidor.");
           }

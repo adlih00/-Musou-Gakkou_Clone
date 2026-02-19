@@ -3,6 +3,7 @@ import { getCarrito } from './productController.js';
 import { getCurso } from './productController.js';
 import { getRecursos } from './productController.js';
 import { getRecurso } from './productController.js';
+import { getUsuario } from './userController.js';
 
 const path = window.location.pathname;
 if (path.includes("Recurso")){
@@ -96,12 +97,38 @@ const appendAlert = (message, type) => {
 
 const alertTrigger = document.getElementById('liveAlertBtn')
 if (alertTrigger) {
-  alertTrigger.addEventListener('click', () => {
+  alertTrigger.addEventListener('click', async () => {
     const queryParams = new URLSearchParams(window.location.search); // Recupera la URL
+    
+    
+    /*if (path.includes("Recurso")){
+        console.log("Es un recurso")
+        let usuario = await getUsuario(1);
+        console.log(usuario)
+    let { 
+    idUsuario, 
+    nombreUsuario, 
+    apellidoUsuario, 
+    correoUsuario, 
+    telefonoUsuario, 
+    rolUsuario,
+    ordenes,
+    resenas,
+    usuarioTieneCursos,
+    usuarioTieneRecursos 
+    } = usuario;
+
+
+    }
+    else{
+        console.log("Es un curso")*/
+
+
     const id = queryParams.get('id'); //Separa el ID del curso de la URL
     //console.log(id);
     //appendAlert('Producto añadido al carrito', 'secondary')
     const storedCarrito = localStorage.getItem('miCarrito');
+
     let carrito = storedCarrito ? JSON.parse(storedCarrito) : [];
     
     /* let existe = false;
@@ -127,7 +154,8 @@ if (alertTrigger) {
     }
 
     //agregarCarrito(id,carrito)
-  })
+}
+  )
 }
 
 /* async function agregarCarrito(id,carrito){
@@ -148,10 +176,18 @@ if (alertTrigger) {
 } */
 async function agregarCarrito(id, carrito) {
   // Obtenemos los productos desde el Back (usando tu productController.js)
-  const productos = await getCursos(); 
+  const cursos = await getCursos(); 
+  const recursos = await getRecursos(); 
   // IMPORTANTE: Cambiamos 'curso.id' por 'curso.idCurso' 
-  const cursoSeleccionado = productos.find(curso => curso.idCurso == id);
-  
+  let cursoSeleccionado =""
+  if (window.location.pathname.includes("Recurso")){
+  cursoSeleccionado = recursos.find(curso => curso.idRecurso == id)
+
+  }
+  else{
+  cursoSeleccionado = cursos.find(curso => curso.idCurso == id);
+}
+    console.log(cursoSeleccionado)
  /*  if (!productos || productos.length === 0) {
     console.error("No se pudieron cargar los productos");
     return;
@@ -160,23 +196,32 @@ async function agregarCarrito(id, carrito) {
   if (cursoSeleccionado) {
     // Revisamos si ya existe un objeto en el carrito con el mismo ID Y la misma MODALIDAD
     const yaExiste = carrito.some(item => 
-      item.idCurso === cursoSeleccionado.idCurso && 
-      item.modalidadCurso === cursoSeleccionado.modalidadCurso
+      item.idCurso === cursoSeleccionado.idCurso 
     );
     if (yaExiste) {
-      alert("Este curso (en esta modalidad) ya está en tu carrito.");
+      alert("Este curso ya está en tu carrito.");
       return; // Detenemos la ejecución para que no se agregue
     }
     // si no existe
     // Creamos un objeto estandarizado antes de meterlo al carrito
-      const productoParaCarrito = {
+    let productoParaCarrito = ""
+    if (window.location.pathname.includes("Recurso")){
+         productoParaCarrito = {
+          idCurso: cursoSeleccionado.idRecurso,
+          titulo: cursoSeleccionado.nombreRecurso,
+          precio: cursoSeleccionado.costoRecurso,
+          imagenUrl: cursoSeleccionado.urlImagenRecurso,
+          tipo: "Recurso"
+    } }else
+        {
+        productoParaCarrito = {
           idCurso: cursoSeleccionado.idCurso,
           titulo: cursoSeleccionado.nombreCurso,
           precio: cursoSeleccionado.costoCurso,
           imagenUrl: cursoSeleccionado.urlImagenCurso,
-          modalidad: cursoSeleccionado.modalidadCurso,
           tipo: "Curso"
       };
+    }
       carrito.push(productoParaCarrito);
       // Guardamos en el localStorage usando el nombre que usa tu carrito.js ('miCarrito')
       localStorage.setItem('miCarrito', JSON.stringify(carrito));
